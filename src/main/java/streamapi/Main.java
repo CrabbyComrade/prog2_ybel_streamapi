@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /** Starter for the stream api task. */
 public class Main {
@@ -89,31 +90,15 @@ public class Main {
      * @return String of all matching lines, separated by {@code "\n"}
      */
     public static String resources(String path) {
-        // TODO
-        StringBuilder result = new StringBuilder();
-
         try (InputStream stream = getResourceAsStream(path)) {
             BufferedReader r = new BufferedReader(new InputStreamReader(stream));
-
-            List<String> allLines = new ArrayList<>();
-
-            String newLine = r.readLine();
-            while (newLine != null) {
-                allLines.add(newLine);
-                newLine = r.readLine();
-            }
-
-            for (int i = 1; i < allLines.size(); i++) {
-                String s = allLines.get(i);
-                if (s.startsWith("a") && !(s.length() < 2)) {
-                    result.append(allLines.get(i)).append("\n");
-                }
-            }
-
+            return r.lines() // Creates a stream of strings from lines read by the buefferedreader
+                        .filter(c -> c.charAt(0) == 'a') // Checks if line starts with a
+                        .filter(c -> c.length() > 2) // Line should be longer than 2
+                        .collect(Collectors.joining("\n")); // Puts them together into one String
         } catch (IOException e) {
             System.err.println("Ouch, that didn't work: \n" + e.getMessage());
+            return null;
         }
-
-        return result.toString();
     }
 }
